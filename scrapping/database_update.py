@@ -116,8 +116,6 @@ if __name__ == "__main__":
                         not_result.append(match['id'])
 
     # porównanie z ostatnią iteracją
-    # with open(r'C:\footstats\log\result.txt', 'r') as f_result_last:
-    #     result_last = [x.rstrip() for x in f_result_last.readlines()]  # existing in database result match
     with open(r'C:\footstats\log\not_result.txt', 'r') as f_not_result_last:
         not_result_last = [x.rstrip() for x in f_not_result_last.readlines()]
 

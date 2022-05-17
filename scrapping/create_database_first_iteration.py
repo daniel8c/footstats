@@ -7,17 +7,17 @@ from pandas.io.json._normalize import nested_to_record
 
 def scrapper_match_situation(index):
 
-    data = _script_to_json(index)
+    data = _script_to_json(index, soup)
     data_away = data['a']
     data_home = data['h']
     return data_away, data_home
 
 def scrapper_match_result():
-    data = _script_to_json(1)
+    data = _script_to_json(1, soup)
     data = nested_to_record(data, sep='_')
     return data
 
-def _script_to_json(index):
+def _script_to_json(index, soup):
     """convert scripts to json format"""
 
     scripts = soup.find_all('script')

@@ -1,11 +1,53 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Statystyki w piłce nożej{% endblock %}</title>
+    <meta name="description" content="Piłka nożna, statystyki w futbolu, bukmacherka, AI w piłce nożnej, kto strzelił">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/2e7fe33098.js" crossorigin="anonymous"></script>
+    <link href="{% static "home/style.css" %}" rel="stylesheet">
+    <meta name='robots' content='index,follow'>
+    <meta name='url' content='http://footstats.pl'>
+    <meta property="og:title" content="Statystyki piłkarskie"/>
+    <meta property="og:description" content="Statystyki w piłce nożnej" />
+    <meta property="og:type" content="article" />
 </head>
 <body>
-<p>Home page</p>
+    <header>
+        <div class="plam"></div>
+        <h1 class="logo">Football Stats</h1>
+        <div class="search-login">
+            <div class="search"><a href="#"><i class="fa-solid fa-magnifying-glass"></i></a></div>
+            <div class="login">
+                <p href="#">Zalogowany jako Daniel</p>
+                <a href="#">Wyloguj</a>
+            </div>
+        </div>
+        <nav class="nav-top">
+            <ul><a href="#">Drużyny</a></ul>
+            <ul><a href="#">Piłkarze</a></ul>
+            <ul><a href="#">Sezony</a></ul>
+            <ul><a href="#">Ciekawe statystyki</a></ul>
+            <ul><a href="#">Typy bukmacherskie</a></ul>
+        </nav>
+    </header>
+    <section class="side-left">
+        <nav class="nav-left">
+            <ul><a href="#">Premier League</a></ul>
+            <ul><a href="#">La Liga</a></ul>
+            <ul><a href="#">Serie A</a></ul>
+            <ul><a href="#">Bundesliga</a></ul>
+            <ul><a href="#">Ligue 1</a></ul>
+        </nav>
+    </section>
+
+    <div id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
 
 </body>
-</html>

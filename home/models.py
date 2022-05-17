@@ -1,11 +1,14 @@
 from django.db import models
 from django.urls import reverse
 
-
 # Create your models here.
+class MatchResultTrue(models.Manager):
+    def get_queryset(self):
+        return super(MatchResultTrue, self).get_queryset().filter(isresult = True).filter(league='EPL').filter(season='2021')
+
 class MatchResult(models.Model):
     id = models.IntegerField(primary_key=True)
-    isresult = models.CharField(max_length=7)
+    isresult = models.BooleanField()
     datetime = models.DateTimeField()
     season = models.IntegerField()
     league = models.CharField(max_length=20)
@@ -25,6 +28,9 @@ class MatchResult(models.Model):
         max_digits=7, decimal_places=5, null=True)
     forecast_l = models.DecimalField(
         max_digits=7, decimal_places=5, null=True)
+
+    objects = models.Manager()
+    resulttrue = MatchResultTrue()
 
     class Meta:
         ordering = ('-datetime',)
@@ -62,7 +68,7 @@ class SituationMatch(models.Model):
         ordering = ('-date',)
 
     def __str__(self):
-        return f'{self.id_situation}, {self.player} - {self.h_team} : {self.a_team}'
+        return f'{self.id}, {self.player} - {self.h_team} : {self.a_team}'
 
 
 class Roster(models.Model):
@@ -88,5 +94,37 @@ class Roster(models.Model):
     xgbuildup = models.DecimalField(max_digits=7, decimal_places=5)
     positionorder = models.IntegerField()
     match_id = models.ForeignKey(MatchResult, on_delete=models.CASCADE, related_name='roster_result')
-    # season = models.IntegerField()
-    # league = models.CharField(max_length=20)
+
+    class Meta:
+        ordering = ('-id',)
+
+    def __str__(self):
+        return f'{self.id}, {self.player}'
+
+class TeamHistory(models.Model):
+    team_id = models.IntegerField()
+    title = models.CharField(max_length=60)
+    season = models.IntegerField()
+    league = models.CharField(max_length=20)
+    kolejka = models.IntegerField()
+    h_a = models.CharField(max_length=2)
+    xg = models.DecimalField(max_digits=7, decimal_places=5)
+    xga = models.DecimalField(max_digits=7, decimal_places=5)
+    npxg = models.DecimalField(max_digits=7, decimal_places=5)
+    npxga = models.DecimalField(max_digits=7, decimal_places=5)
+    deep = models.IntegerField()
+    deep_allowed = models.IntegerField()
+    scored = models.IntegerField()
+    missed = models.IntegerField()
+    xpts = models.DecimalField(max_digits=7, decimal_places=5)
+    result = models.CharField(max_length=2)
+    date = models.DateTimeField()
+    wins = models.IntegerField()
+    draws = models.IntegerField()
+    loses = models.IntegerField()
+    pts = models.IntegerField()
+    npxgd = models.DecimalField(max_digits=7, decimal_places=5)
+    ppda_att = models.IntegerField()
+    ppda_def = models.IntegerField()
+    ppda_allowed_att = models.IntegerField()
+    ppda_allowed_def = models.IntegerField()
