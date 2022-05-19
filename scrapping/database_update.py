@@ -75,7 +75,7 @@ def situation_to_database():
     for row_1, row_2 in zip(data_home, data_away):
         insert_row(connection, cursor, row_1, 'home_situationmatch')
         insert_row(connection, cursor, row_2, 'home_situationmatch')
-    for row_1, row_2 in zip(list(rosters_home.values()), list(rosters_home.values())):
+    for row_1, row_2 in zip(list(rosters_home.values()), list(rosters_away.values())):
         row_1['match_id'] = str(id)
         row_2['match_id'] = str(id)
         insert_row(connection, cursor, row_1, 'home_roster')
@@ -84,6 +84,15 @@ def situation_to_database():
 
 def match_to_database():
     insert_row(connection, cursor, match, 'home_matchresult')
+
+def update_row(connection, cursor, row, table_name):
+    column_names = str(tuple(row.keys())).replace("'", "")
+    record_to_insert = list(row.values())
+    postgres_insert_query = f""" UPDATE {table_name} SET {column_names} = ({('%s, ' * len(record_to_insert))[:-2]}) WHERE id = {int(row['id'])}"""
+    cursor.execute(postgres_insert_query, record_to_insert)
+    connection.commit()
+
+
 
 
 if __name__ == "__main__":
@@ -131,6 +140,7 @@ if __name__ == "__main__":
             f_not_result_now.write(id + '\n')
 
     # update database
+    id_result_match = ['16740']
     if id_result_match:
         try:
             connection, cursor = connect_database()
@@ -146,7 +156,7 @@ if __name__ == "__main__":
                         if match['id'] in id_result_match:
                             match['league'] = league
                             match['season'] = season
-                            match_to_database()
+                            insert_row(connection, cursor, match, 'home_matchresult')
 
             for id in id_result_match:
                 url = create_url('match', id, base=base_url)

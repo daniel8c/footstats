@@ -12,7 +12,7 @@ def scrapper_match_situation(index):
     data_home = data['h']
     return data_away, data_home
 
-def scrapper_match_result():
+def scrapper_match_result(soup):
     data = _script_to_json(1, soup)
     data = nested_to_record(data, sep='_')
     return data

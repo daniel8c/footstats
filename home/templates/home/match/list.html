@@ -1,0 +1,14 @@
+{% extends "home/base.html" %}
+{% block title %}Statystyki w piłce nożnej{% endblock %}
+
+{% block content %}
+    <h1>Ostatnie mecze</h1>
+    {% for match in matches %}
+        <h2>
+            <p class="date">{{ match.datetime|date:"G:i, j F Y" }}</p>
+            <a href="{{ match.get_absolute_url }}"> {{ match.h_title }} {{ match.goals_h }}
+                : {{ match.goals_a }} {{ match.a_title }} </a>
+        </h2>
+    {% endfor %}
+    {% include "pagination.html" with page=matches %}
+{% endblock %}

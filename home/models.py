@@ -1,10 +1,37 @@
 from django.db import models
 from django.urls import reverse
 
+
 # Create your models here.
-class MatchResultTrue(models.Manager):
+# TODO filtrowanie na stronie startowej przy pomocy kolejek
+
+class MatchResultTrue2021(models.Manager):
     def get_queryset(self):
-        return super(MatchResultTrue, self).get_queryset().filter(isresult = True).filter(league='EPL').filter(season='2021')
+        return super(MatchResultTrue2021, self).get_queryset().filter(season='2021').filter(isresult=True)
+
+
+class PremierLeague(MatchResultTrue2021):
+    def get_queryset(self):
+        return super(PremierLeague, self).get_queryset().filter(league='EPL')
+
+
+class LaLiga(MatchResultTrue2021):
+    def get_queryset(self):
+        return super(LaLiga, self).get_queryset().filter(league='La_Liga')
+
+
+class SerieA(MatchResultTrue2021):
+    def get_queryset(self):
+        return super(SerieA, self).get_queryset().filter(league='Serie_A')
+
+class Bundesliga(MatchResultTrue2021):
+    def get_queryset(self):
+        return super(Bundesliga, self).get_queryset().filter(league='Bundesliga')
+
+class Ligue_1(MatchResultTrue2021):
+    def get_queryset(self):
+        return super(Ligue_1, self).get_queryset().filter(league='Ligue_1')
+
 
 class MatchResult(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -30,13 +57,22 @@ class MatchResult(models.Model):
         max_digits=7, decimal_places=5, null=True)
 
     objects = models.Manager()
-    resulttrue = MatchResultTrue()
+    resulttrue = MatchResultTrue2021()
+    premierleague = PremierLeague()
+    laliga = LaLiga()
+    seriea = SerieA()
+    bundesliga = Bundesliga()
+    ligue1 = Ligue_1()
 
     class Meta:
         ordering = ('-datetime',)
+        managed = False
 
     def __str__(self):
         return f'{self.id} - {self.h_title} {self.goals_h} : {self.a_title} {self.goals_a}'
+
+    def get_absolute_url(self):
+        return reverse('home:match_detail', args=[self.id, self.h_title, self.a_title])
 
 
 class SituationMatch(models.Model):
@@ -62,10 +98,12 @@ class SituationMatch(models.Model):
     player_assisted = models.CharField(max_length=60, null=True)
     lastaction = models.CharField(max_length=60)
     season = models.IntegerField()
+
     # league = models.CharField(max_length=20)
 
     class Meta:
         ordering = ('-date',)
+        managed = False
 
     def __str__(self):
         return f'{self.id}, {self.player} - {self.h_team} : {self.a_team}'
@@ -97,12 +135,15 @@ class Roster(models.Model):
 
     class Meta:
         ordering = ('-id',)
+        managed = False
 
     def __str__(self):
         return f'{self.id}, {self.player}'
 
+
 class TeamHistory(models.Model):
     team_id = models.IntegerField()
+    match = models.ForeignKey(MatchResult, on_delete=models.CASCADE, related_name='history_result')
     title = models.CharField(max_length=60)
     season = models.IntegerField()
     league = models.CharField(max_length=20)
@@ -128,3 +169,9 @@ class TeamHistory(models.Model):
     ppda_def = models.IntegerField()
     ppda_allowed_att = models.IntegerField()
     ppda_allowed_def = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.team_id}, {self.title}'
+
+    class Meta:
+        ordering = ('-date',)
