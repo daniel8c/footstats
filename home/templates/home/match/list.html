@@ -1,8 +1,18 @@
 {% extends "home/base.html" %}
 {% block title %}Statystyki w piłce nożnej{% endblock %}
 
+{#{% block sidebar %}#}
+{#    {% for one_league in all_leagues %}#}
+{#        <ul><a href="{{ one_league.get_absolute_url }}">{{ one_league }}</a></ul>#}
+{#    {% endfor %}#}
+{#{% endblock %}#}
+
 {% block content %}
-    <h1>Ostatnie mecze</h1>
+    {% if league %}
+        <h1>{{ league }}</h1>
+    {% else %}
+        <h1>Ostatnie mecze</h1>
+    {% endif %}
     {% for match in matches %}
         <h2>
             <p class="date">{{ match.datetime|date:"G:i, j F Y" }}</p>

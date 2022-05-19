@@ -20,7 +20,7 @@
 <body>
 <header>
     <div class="plam"></div>
-    <h1 class="logo">Football Stats</h1>
+    <a href="/home"><h1 class="logo">Football Stats</h1></a>
     {#        <div class="search-login">#}
     {#            <div class="search"><a href="#"><i class="fa-solid fa-magnifying-glass"></i></a></div>#}
     {#            <div class="login">#}
@@ -39,10 +39,10 @@
 <section class="side-left">
     <nav class="nav-left">
         <div id="nav-sidebar">
-{#            <p>jestem tutaj {% total_matches %}</p>#}
+            {#            <p>jestem tutaj {% total_matches %}</p>#}
             {% display_league as leagues %}
-            {% for ligue in leagues %}
-                <ul><a href="{{ligue | repl}}">{{ligue}}</a></ul>
+            {% for league in leagues %}
+                <ul><a href="{{ league.get_absolute_url }}">{{ league }}</a></ul>
             {% endfor %}
         </div>
     </nav>

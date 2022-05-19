@@ -1,5 +1,5 @@
 from django import template
-from home.models import MatchResult
+from home.models import MatchResult, League
 
 register = template.Library()
 
@@ -9,7 +9,7 @@ def total_matches():
 
 @register.simple_tag
 def display_league():
-    leagues = ['Premier League', 'La Liga', 'Serie A', 'Bundesliga', 'Ligue 1']
+    leagues = League.objects.all()
     return leagues
 
 @register.filter

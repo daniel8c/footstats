@@ -1,36 +1,32 @@
 from django.db import models
 from django.urls import reverse
+import datetime
 
 
 # Create your models here.
 # TODO filtrowanie na stronie startowej przy pomocy kolejek
 
 class MatchResultTrue2021(models.Manager):
+
     def get_queryset(self):
-        return super(MatchResultTrue2021, self).get_queryset().filter(season='2021').filter(isresult=True)
+        now = datetime.datetime.now()
+        start_date = now - datetime.timedelta(30)
+        return super(MatchResultTrue2021, self).get_queryset().filter(isresult=True).filter(datetime__range=(start_date, now))
 
 
-class PremierLeague(MatchResultTrue2021):
-    def get_queryset(self):
-        return super(PremierLeague, self).get_queryset().filter(league='EPL')
+class League(models.Model):
+    name = models.CharField(primary_key=True, max_length=20)
+    pretty_name = models.CharField(max_length=20)
+    date = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ('date',)
 
-class LaLiga(MatchResultTrue2021):
-    def get_queryset(self):
-        return super(LaLiga, self).get_queryset().filter(league='La_Liga')
+    def __str__(self):
+        return f'{self.pretty_name}'
 
-
-class SerieA(MatchResultTrue2021):
-    def get_queryset(self):
-        return super(SerieA, self).get_queryset().filter(league='Serie_A')
-
-class Bundesliga(MatchResultTrue2021):
-    def get_queryset(self):
-        return super(Bundesliga, self).get_queryset().filter(league='Bundesliga')
-
-class Ligue_1(MatchResultTrue2021):
-    def get_queryset(self):
-        return super(Ligue_1, self).get_queryset().filter(league='Ligue_1')
+    def get_absolute_url(self):
+        return reverse('home:filter_league', args=[self.name])
 
 
 class MatchResult(models.Model):
@@ -55,18 +51,13 @@ class MatchResult(models.Model):
         max_digits=7, decimal_places=5, null=True)
     forecast_l = models.DecimalField(
         max_digits=7, decimal_places=5, null=True)
+    league_link = models.ForeignKey('League', null=True, on_delete=models.DO_NOTHING, related_name='result_league')
 
     objects = models.Manager()
     resulttrue = MatchResultTrue2021()
-    premierleague = PremierLeague()
-    laliga = LaLiga()
-    seriea = SerieA()
-    bundesliga = Bundesliga()
-    ligue1 = Ligue_1()
 
     class Meta:
         ordering = ('-datetime',)
-        managed = False
 
     def __str__(self):
         return f'{self.id} - {self.h_title} {self.goals_h} : {self.a_title} {self.goals_a}'

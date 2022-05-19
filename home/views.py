@@ -1,45 +1,15 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpRequest
-from home.models import MatchResult
+from home.models import MatchResult, League
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 # Create your views here.
 
 
 def match_list(request):
-    print(request)
-    print(request.path == '/home/')
-    if request.method == 'GET':
-        print('GET')
-    leagues = ['Premier League', 'La Liga', 'Serie A', 'Bundesliga', 'Ligue 1']
     object_list = MatchResult.resulttrue.all()
-    paginator = Paginator(object_list, 10)
-    page = request.GET.get('page')
-    la_liga = request.GET.get('La Liga')
-    print(la_liga)
-
-    try:
-        matches = paginator.page(page)
-    except PageNotAnInteger:
-        matches = paginator.page(1)
-    except EmptyPage:
-        matches = paginator.page(paginator.num_pages)
-    return render(request, 'home/match/list.html', {'matches': matches, 'page':  page, 'leagues': leagues})
-
-def match_list_premier_league(request):
-    object_list = MatchResult.premierleague.all()
-    paginator = Paginator(object_list, 10)
-    page = request.GET.get('page')
-    try:
-        matches = paginator.page(page)
-    except PageNotAnInteger:
-        matches = paginator.page(1)
-    except EmptyPage:
-        matches = paginator.page(paginator.num_pages)
-    return render(request, 'home/match/list.html', {'matches': matches, 'page':  page})
-
-def match_list_la_liga(request):
-    object_list = MatchResult.laliga.all()
+    all_leagues = League.objects.all()
     paginator = Paginator(object_list, 10)
     page = request.GET.get('page')
 
@@ -49,51 +19,30 @@ def match_list_la_liga(request):
         matches = paginator.page(1)
     except EmptyPage:
         matches = paginator.page(paginator.num_pages)
-    return render(request, 'home/match/list.html', {'matches': matches, 'page':  page})
+    return render(request, 'home/match/list.html', {'matches': matches, 'all_leagues': all_leagues, 'page': page})
 
-def match_list_serie_a(request):
-    object_list = MatchResult.seriea.all()
+
+def filter_league(request, name):
+    all_leagues = League.objects.all()
+    league = get_object_or_404(League, name=name)
+    object_list = league.result_league.filter(season='2021').filter(isresult=True)
+
     paginator = Paginator(object_list, 10)
     page = request.GET.get('page')
+
     try:
         matches = paginator.page(page)
     except PageNotAnInteger:
         matches = paginator.page(1)
     except EmptyPage:
         matches = paginator.page(paginator.num_pages)
-    return render(request, 'home/match/list.html', {'matches': matches, 'page':  page})
 
-def match_list_bundesliga(request):
-    object_list = MatchResult.bundesliga.all()
-    paginator = Paginator(object_list, 10)
-    page = request.GET.get('page')
-    try:
-        matches = paginator.page(page)
-    except PageNotAnInteger:
-        matches = paginator.page(1)
-    except EmptyPage:
-        matches = paginator.page(paginator.num_pages)
-    return render(request, 'home/match/list.html', {'matches': matches, 'page':  page})
-
-def match_list_ligue_1(request):
-    object_list = MatchResult.ligue1.all()
-    paginator = Paginator(object_list, 10)
-    page = request.GET.get('page')
-    try:
-        matches = paginator.page(page)
-    except PageNotAnInteger:
-        matches = paginator.page(1)
-    except EmptyPage:
-        matches = paginator.page(paginator.num_pages)
-    return render(request, 'home/match/list.html', {'matches': matches, 'page':  page})
-
-
-
+    return render(request, 'home/match/list.html', {'league': league, 'matches': matches, 'all_leagues': all_leagues, })
 
 
 def match_detail(request, id, h_title, a_title):
-    match = get_object_or_404(MatchResult, id = id, h_title = h_title, a_title = a_title)
-    return render(request, 'home/match/detail.html', {'match' : match})
+    match = get_object_or_404(MatchResult, id=id, h_title=h_title, a_title=a_title)
+    return render(request, 'home/match/detail.html', {'match': match})
 
 # def match_list_league(request):
 #     leagues = ['Premier League', 'La Liga', 'Serie A', 'Bundesliga', 'Ligue 1']
