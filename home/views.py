@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpRequest
 from home.models import MatchResult, League
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from home.pitch import draw_pitch
+from plotly.offline import plot
 
 
 # Create your views here.
@@ -42,7 +44,11 @@ def filter_league(request, name):
 
 
 def match_detail(request, id, h_title, a_title):
+
     match = get_object_or_404(MatchResult, id=id, h_title=h_title, a_title=a_title)
+    fig = draw_pitch()
+    config = {'displayModeBar': False, }
+    plot_div = plot({'data': fig,}, output_type='div', config = config)
     # TODO plot with situation
     # TODO display rosters
-    return render(request, 'home/match/detail.html', {'match': match})
+    return render(request, 'home/match/detail.html', {'match': match, 'plot_div': plot_div})

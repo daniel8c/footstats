@@ -2,4 +2,7 @@
 {% block title %}{{ match.h_title }} - {{ match.a_title }}{% endblock %}
 {% block content %}
     {{ match }}
+    <div>
+    {{ plot_div | safe}}
+    </div>
 {% endblock %}
