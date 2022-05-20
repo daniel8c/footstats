@@ -4,13 +4,12 @@ import datetime
 
 
 # Create your models here.
-# TODO filtrowanie na stronie startowej przy pomocy kolejek
 
 class MatchResultTrue2021(models.Manager):
 
     def get_queryset(self):
         now = datetime.datetime.now()
-        start_date = now - datetime.timedelta(30)
+        start_date = now - datetime.timedelta(12)
         return super(MatchResultTrue2021, self).get_queryset().filter(isresult=True).filter(datetime__range=(start_date, now))
 
 

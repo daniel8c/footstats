@@ -1,4 +1,5 @@
 {% extends "home/base.html" %}
+{% load home_tags %}
 {% block title %}Statystyki w piłce nożnej{% endblock %}
 
 {#{% block sidebar %}#}
@@ -8,14 +9,17 @@
 {#{% endblock %}#}
 
 {% block content %}
-    {% if league %}
-        <h1>{{ league }}</h1>
+    {% if a_league %}
+        <h1>{{ a_league | upper }}</h1>
     {% else %}
         <h1>Ostatnie mecze</h1>
     {% endif %}
+    {# TODO grouping by leagues on the home page#}
+
     {% for match in matches %}
         <h2>
-            <p class="date">{{ match.datetime|date:"G:i, j F Y" }}</p>
+            <p class="date">{{ match.datetime|date:"G:i, j F Y" }}
+                {% if not a_league %}{{ match.league }}{% endif %}</p>
             <a href="{{ match.get_absolute_url }}"> {{ match.h_title }} {{ match.goals_h }}
                 : {{ match.goals_a }} {{ match.a_title }} </a>
         </h2>
