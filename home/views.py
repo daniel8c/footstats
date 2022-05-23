@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpRequest
 from home.models import MatchResult, League
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from home.pitch import draw_pitch
+from home.pitch import draw_pitch, get_info_situations, add_situations_to_pitch
 from plotly.offline import plot
 
 
@@ -46,7 +46,9 @@ def filter_league(request, name):
 def match_detail(request, id, h_title, a_title):
 
     match = get_object_or_404(MatchResult, id=id, h_title=h_title, a_title=a_title)
+    home_s, away_s = get_info_situations(match)
     fig = draw_pitch()
+    add_situations_to_pitch(fig, home_s,away_s)
     config = {'displayModeBar': False, }
     plot_div = plot({'data': fig,}, output_type='div', config = config)
     # TODO plot with situation

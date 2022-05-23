@@ -129,8 +129,8 @@ def draw_pitch(x_min=0, y_min=0, x_max=108, y_max=68):
                   line_color='LightSeaGreen')
 
     fig.add_shape(type='path',
-                  path=ellipse_arc(pitch_x[2], pitch_y[3], a=radius, b=radius, start_angle= -al/2,
-                                   end_angle= al/2, N=160),
+                  path=ellipse_arc(pitch_x[2], pitch_y[3], a=radius, b=radius, start_angle=-al / 2,
+                                   end_angle=al / 2, N=160),
                   line_color='LightSeaGreen')
 
     return fig
@@ -165,3 +165,92 @@ def alpha(xo, yo, lx, r):
     beta = np.arcsin(k / 2 / r)  # since
 
     return alpha * 2, beta * 2
+
+
+def get_info_situations(match) -> dict:
+    print(match)
+    situations = match.situation_result.all()
+    situations_home = situations.filter(h_a='h')
+    situations_away = situations.filter(h_a='a')
+    print('situations_away :', situations_away)
+    print()
+    goals_home = situations_home.filter(result='Goal')
+    goals_away = situations_away.filter(result='Goal')
+    shots_home = situations_home.exclude(result='Goal')
+    shots_away = situations_away.exclude(result='Goal')
+
+    def iter_to_list(column_name, value=goals_home, dtype_='float'):
+        return np.fromiter(value.values_list(column_name, flat=True), dtype=dtype_)
+
+    x_goals_home = iter_to_list('x')
+    y_goals_home = iter_to_list('y')
+    player_goals_home = iter_to_list('player', dtype_='U60')
+    xg_goals_home = iter_to_list('xg')
+    x_shots_home = iter_to_list('x', shots_home)
+    y_shots_home = iter_to_list('y', shots_home)
+    player_goals_shots = iter_to_list('player', shots_home, dtype_='U60')
+    xg_shots_home = iter_to_list('xg')
+
+    x_goals_away = iter_to_list('x', goals_away)
+    y_goals_away = iter_to_list('y', goals_away)
+    player_goals_away = iter_to_list('player', goals_away, 'U60')
+    xg_goals_away = iter_to_list('xg', goals_away)
+    x_shots_away = iter_to_list('x', shots_away)
+    y_shots_away = iter_to_list('y', shots_away)
+    player_goals_shots = iter_to_list('player', shots_away, dtype_='U60')
+    xg_shots_away = iter_to_list('xg', goals_away)
+
+    home_s = {
+        'x_goals_home': x_goals_home,
+        'y_goals_home': y_goals_home,
+        'player_goals_home': player_goals_home,
+        'xg_goals_home': xg_goals_home,
+        'x_shots_home': x_shots_home,
+        'y_shots_home': y_shots_home,
+        'player_goals_shots': player_goals_shots,
+        'xg_shots_home': xg_shots_home
+    }
+    print('home: ', home_s)
+    print()
+    away_s = {
+        'x_goals_away': x_goals_away,
+        'y_goals_away': y_goals_away,
+        'player_goals_away': player_goals_away,
+        'xg_goals_away': xg_goals_away,
+        'x_shots_away': x_shots_away,
+        'y_shots_away': y_shots_away,
+        'player_goals_shots': player_goals_shots,
+        'xg_shots_away': xg_shots_away
+    }
+    print('away ', away_s)
+    return home_s, away_s
+
+
+def add_situations_to_pitch(fig, home_s, away_s, xmax=108, ymax=68):
+    fig.add_scatter(x=home_s['x_goals_home']* xmax ,
+                    y = home_s['y_goals_home']*ymax ,
+                    mode = 'markers',
+                    text = home_s['player_goals_home'],
+                    hovertemplate = '<b>%{text}</b>',
+                    marker=dict(size=home_s['xg_goals_home'] * 1000,
+                                sizemode='area',
+                                color='rgba(235, 79, 56, .6)',
+                                line=dict(width=0))
+                    )
+    fig.add_scatter(x=(1 - away_s['x_goals_away'] )* xmax ,
+                    y = (1 - away_s['y_goals_away']) *ymax ,
+                    mode = 'markers',
+                    text = away_s['player_goals_away'],
+                    hovertemplate = '<b>%{text}</b>',
+                    marker=dict(size=away_s['xg_goals_away'] * 1000,
+                                sizemode='area',
+                                color='rgba(235, 79, 222, .6)',
+                                line=dict(width=0))
+                    )
+    # situation away
+
+    # fig.add_scatter(x=x_a * 108, y=y_a * 68, mode="markers", text=players_situation_a, hovertemplate='<b>%{text}</b>',
+    #                 marker=dict(size=s_xG_a * 1000,
+    #                             sizemode='area',
+    #                             color='rgba(235, 79, 56, .6)',
+    #                             line=dict(width=0)))

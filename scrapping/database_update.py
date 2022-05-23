@@ -135,12 +135,9 @@ if __name__ == "__main__":
         for id in result:
             f_result_now.write(id + '\n')
 
-    with open(r'C:\footstats\log\not_result.txt', 'w') as f_not_result_now:
-        for id in not_result:
-            f_not_result_now.write(id + '\n')
+
 
     # update database
-    id_result_match = ['16740']
     if id_result_match:
         try:
             connection, cursor = connect_database()
@@ -152,11 +149,12 @@ if __name__ == "__main__":
                     soup = create_soup(url)
 
                     data = scrapper_match_result()
+
                     for match in data:
                         if match['id'] in id_result_match:
                             match['league'] = league
                             match['season'] = season
-                            insert_row(connection, cursor, match, 'home_matchresult')
+                            update_row(connection, cursor, match, 'home_matchresult')
 
             for id in id_result_match:
                 url = create_url('match', id, base=base_url)
@@ -172,3 +170,7 @@ if __name__ == "__main__":
             # closing database connection.
             if connection:
                 close_database(connection, cursor)
+
+    with open(r'C:\footstats\log\not_result.txt', 'w') as f_not_result_now:
+        for id in not_result:
+            f_not_result_now.write(id + '\n')
