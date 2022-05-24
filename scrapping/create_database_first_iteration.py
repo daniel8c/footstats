@@ -81,15 +81,17 @@ def close_database(connection, cursor):
 
 
 def match_to_database(situations_home, situations_away, roster_home, roster_away, id):
-    for row_1, row_2 in zip(situations_home, situations_away):
+    for row_1 in situations_home:
         insert_row(connection, cursor, row_1, 'home_situationmatch')
+    for row_2 in situations_away:
         insert_row(connection, cursor, row_2, 'home_situationmatch')
-    for row_1, row_2 in zip(list(roster_home.values()), list(roster_away.values())):
-        row_1['match_id'] = str(id)
-        row_2['match_id'] = str(id)
-        insert_row(connection, cursor, row_1, 'home_roster')
-        insert_row(connection, cursor, row_2, 'home_roster')
 
+    for row_1 in list(roster_home.values()):
+        row_1['match_id'] = str(id)
+        insert_row(connection, cursor, row_1, 'home_roster')
+    for row_2 in list(roster_away.values()):
+        row_2['match_id'] = str(id)
+        insert_row(connection, cursor, row_2, 'home_roster')
 
 def match_result_to_database(match):
     insert_row(connection, cursor, match, 'home_matchresult')
