@@ -7,18 +7,22 @@
     </div>
     <div>
         <h1>Składy</h1>
-    <div class="container">
-        <div class="rosters_home">
-            {% for player in rosters_home %}
-                <h2>{{ player }}</h2>
-            {% endfor %}
+        <div class="container">
+            <div class="rosters_home">
+                {% for player in rosters_home %}
+                    <a href="{{ player.get_absolute_url }}">
+                        <h2>{{ player }}</h2>
+                    </a>
+                {% endfor %}
+            </div>
+            <div class="rosters_away">
+                {% for player in rosters_away %}
+                    <a href="{{ player.get_absolute_url }}">
+                        <h2>{{ player }}</h2>
+                    </a>
+                {% endfor %}
+            </div>
         </div>
-        <div class="rosters_away">
-            {% for player in rosters_away %}
-                <h2>{{ player }}</h2>
-            {% endfor %}
-        </div>
-    </div>
 
     </div>
 

@@ -48,7 +48,7 @@ def match_detail(request, id, h_title, a_title):
     match = get_object_or_404(MatchResult, id=id, h_title=h_title, a_title=a_title)
     home_s, away_s = get_info_situations(match)
     fig = draw_pitch()
-    add_situations_to_pitch(fig, home_s, away_s, match = match)
+    add_situations_to_pitch(fig, home_s, away_s, match=match)
     config = {'displayModeBar': False, }
     plot_div = plot({'data': fig, }, output_type='div', config=config)
 
@@ -58,3 +58,9 @@ def match_detail(request, id, h_title, a_title):
     # TODO display rosters
     return render(request, 'home/match/detail.html',
                   {'match': match, 'plot_div': plot_div, 'rosters_home': rosters_home, 'rosters_away': rosters_away})
+
+
+def player_detail(request, id, player):
+    player_info = get_object_or_404(Roster, id=id, player=player)
+    print(id)
+    return render(request, 'home/player/detail.html', {'player_info': player_info})

@@ -130,6 +130,9 @@ class Roster(models.Model):
     def __str__(self):
         return f'{self.player}'
 
+    def get_absolute_url(self):
+        return reverse('home:player_detail', args=[self.id, self.player])
+
 
 class TeamHistory(models.Model):
     team_id = models.IntegerField()

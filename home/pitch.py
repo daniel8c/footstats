@@ -168,18 +168,15 @@ def alpha(xo, yo, lx, r):
 
 
 def get_info_situations(match) -> dict:
-    print('TUU')
-    print(match.h_title)
+
     situations = match.situation_result.all()
     situations_home = situations.filter(h_a='h')
     situations_away = situations.filter(h_a='a')
-    print('situations_away :', len(situations_away))
-    print()
+
     goals_home = situations_home.filter(result='Goal')
     goals_away = situations_away.filter(result='Goal')
     shots_home = situations_home.exclude(result='Goal')
     shots_away = situations_away.exclude(result='Goal')
-    print('shots away :', len(shots_away))
 
     def iter_to_list(column_name, value=goals_home, dtype_='float'):
         return np.fromiter(value.values_list(column_name, flat=True), dtype=dtype_)
@@ -226,7 +223,6 @@ def get_info_situations(match) -> dict:
 
 
 def add_situations_to_pitch(fig, home_s, away_s, xmax=108, ymax=68, match = None):
-    print(match)
     skal = 500
     sizemin = 2
 
@@ -305,5 +301,3 @@ def add_situations_to_pitch(fig, home_s, away_s, xmax=108, ymax=68, match = None
     fig.add_annotation(text = match.goals_a,
                        xref="paper", yref="paper",
                        x=0.53, y=0.5, showarrow=False, font = dict(size = 32, color='rgba(235, 79, 222, .2)' ))
-
-    # fig.update_traces(textposition='inside')
