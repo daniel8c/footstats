@@ -9,7 +9,7 @@ class MatchResultTrue2021(models.Manager):
 
     def get_queryset(self):
         now = datetime.datetime.now()
-        start_date = now - datetime.timedelta(12)
+        start_date = now - datetime.timedelta(80)
         return super(MatchResultTrue2021, self).get_queryset().filter(isresult=True).filter(datetime__range=(start_date, now))
 
 
@@ -59,7 +59,7 @@ class MatchResult(models.Model):
         ordering = ('-datetime',)
 
     def __str__(self):
-        return f'{self.id} - {self.h_title} {self.goals_h} : {self.a_title} {self.goals_a}'
+        return f'{self.h_title} {self.goals_h} : {self.a_title} {self.goals_a}'
 
     def get_absolute_url(self):
         return reverse('home:match_detail', args=[self.id, self.h_title, self.a_title])
@@ -93,7 +93,7 @@ class SituationMatch(models.Model):
 
     class Meta:
         ordering = ('-date',)
-        managed = False
+        # managed = False
 
     def __str__(self):
         return f'{self.id}, {self.player} - {self.h_team} : {self.a_team}'
@@ -125,10 +125,10 @@ class Roster(models.Model):
 
     class Meta:
         ordering = ('-id',)
-        managed = False
+        # managed = False
 
     def __str__(self):
-        return f'{self.id}, {self.player}'
+        return f'{self.player}'
 
 
 class TeamHistory(models.Model):

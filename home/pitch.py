@@ -11,7 +11,7 @@ def draw_pitch(x_min=0, y_min=0, x_max=108, y_max=68):
         'plot_bgcolor': '#303640',
         # 'xaxis_title': 'X',
         # 'yaxis_title': 'Y',
-        'height': 600,
+        'height': 700,
         # 'width': 900,
 
     }
@@ -168,7 +168,8 @@ def alpha(xo, yo, lx, r):
 
 
 def get_info_situations(match) -> dict:
-    print(match)
+    print('TUU')
+    print(match.h_title)
     situations = match.situation_result.all()
     situations_home = situations.filter(h_a='h')
     situations_away = situations.filter(h_a='a')
@@ -197,8 +198,6 @@ def get_info_situations(match) -> dict:
     player_goals_away = iter_to_list('player', goals_away, 'U60')
     xg_goals_away = iter_to_list('xg', goals_away)
     x_shots_away = iter_to_list('x', shots_away)
-    # print('x shots away :', len(x_shots_away))
-    # print('z shots away :', x_shots_away)
     y_shots_away = iter_to_list('y', shots_away)
     player_shots_away = iter_to_list('player', shots_away, dtype_='U60')
     xg_shots_away = iter_to_list('xg', shots_away)
@@ -213,8 +212,6 @@ def get_info_situations(match) -> dict:
         'player_shots_home': player_shots_home,
         'xg_shots_home': xg_shots_home
     }
-    # print('home: ', home_s)
-    # print()
     away_s = {
         'x_goals_away': x_goals_away,
         'y_goals_away': y_goals_away,
@@ -225,27 +222,15 @@ def get_info_situations(match) -> dict:
         'player_shots_away': player_shots_away,
         'xg_shots_away': xg_shots_away
     }
-    # print('away: ', away_s)
-    # print()
     return home_s, away_s
 
 
-def add_situations_to_pitch(fig, home_s, away_s, xmax=108, ymax=68):
-    skal = 300
-    sizemin = 3
+def add_situations_to_pitch(fig, home_s, away_s, xmax=108, ymax=68, match = None):
+    print(match)
+    skal = 500
+    sizemin = 2
 
-    fig.add_scatter(x=home_s['x_shots_home'] * xmax,
-                    y=home_s['y_shots_home'] * ymax,
-                    mode='markers',
-                    text=home_s['player_shots_home'],
-                    hovertemplate='<b>%{text}</b>',
-                    marker=dict(size=home_s['xg_shots_home'] * skal,
-                                sizemode='area',
-                                color='rgba(235, 79, 56, .6)',
-                                line=dict(width=0),
-                                sizemin=sizemin),
-                    name = 'Sytuacje gospodarzy'
-                    )
+    #shots_away
     fig.add_scatter(x=(1 - away_s['x_shots_away']) * xmax,
                     y=(1 - away_s['y_shots_away']) * ymax,
                     mode='markers',
@@ -258,19 +243,20 @@ def add_situations_to_pitch(fig, home_s, away_s, xmax=108, ymax=68):
                                 sizemin=sizemin),
                     name='Sytuacje gości'
                     )
-    fig.add_scatter(x=home_s['x_goals_home'] * xmax,
-                    y=home_s['y_goals_home'] * ymax,
+    #shots_home
+    fig.add_scatter(x=home_s['x_shots_home'] * xmax,
+                    y=home_s['y_shots_home'] * ymax,
                     mode='markers',
-                    text=home_s['player_goals_home'],
+                    text=home_s['player_shots_home'],
                     hovertemplate='<b>%{text}</b>',
-                    marker=dict(symbol='star',
-                                size=home_s['xg_goals_home'] * skal,
+                    marker=dict(size=home_s['xg_shots_home'] * skal,
                                 sizemode='area',
-                                color='rgba(255, 111, 56, .6)',
-                                line=dict(width=0.5),
-                                sizemin=sizemin,
-                                ),
-                    name= 'Gole gospodarzy')
+                                color='rgba(235, 79, 56, .6)',
+                                line=dict(width=0),
+                                sizemin=sizemin),
+                    name = 'Sytuacje gospodarzy'
+                    )
+    #goals_away
     fig.add_scatter(x=(1 - away_s['x_goals_away']) * xmax,
                     y=(1 - away_s['y_goals_away']) * ymax,
                     mode='markers',
@@ -284,3 +270,40 @@ def add_situations_to_pitch(fig, home_s, away_s, xmax=108, ymax=68):
                                 sizemin=3),
                     name='Gole gości'
                     )
+    #goals_home
+    fig.add_scatter(x=home_s['x_goals_home'] * xmax,
+                    y=home_s['y_goals_home'] * ymax,
+                    mode='markers',
+                    text=home_s['player_goals_home'],
+                    hovertemplate='<b>%{text}</b>',
+                    marker=dict(symbol='star',
+                                size=home_s['xg_goals_home'] * skal,
+                                sizemode='area',
+                                color='rgba(255, 111, 56, .6)',
+                                line=dict(width=0.5),
+                                sizemin=sizemin,
+                                ),
+                    name= 'Gole gospodarzy')
+    fig.update_layout(legend=dict(
+        yanchor="top",
+        y=1.1,
+        xanchor="center",
+        x=0.5,
+        orientation = 'h'
+    ))
+
+    fig.add_annotation(text = f'{match.h_title}',
+                       xref="paper", yref="paper",
+                       x=0.30, y=0.9, showarrow=False, font = dict(size = 22, color='rgba(235, 79, 56, .4)' ))
+    fig.add_annotation(text = match.goals_h,
+                       xref="paper", yref="paper",
+                       x=0.47, y=0.5, showarrow=False, font = dict(size = 32, color='rgba(235, 79, 56, .2)' ))
+
+    fig.add_annotation(text=match.a_title,
+                       xref="paper", yref="paper",
+                       x=0.70, y=0.9, showarrow=False, font=dict(size=22, color='rgba(235, 79, 222, .4)'))
+    fig.add_annotation(text = match.goals_a,
+                       xref="paper", yref="paper",
+                       x=0.53, y=0.5, showarrow=False, font = dict(size = 32, color='rgba(235, 79, 222, .2)' ))
+
+    # fig.update_traces(textposition='inside')

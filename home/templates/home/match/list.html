@@ -14,12 +14,10 @@
     {% else %}
         <h1>Ostatnie mecze</h1>
     {% endif %}
-    {# TODO grouping by leagues on the home page#}
-
     {% for match in matches %}
         <h2>
             <p class="date">{{ match.datetime|date:"G:i, j F Y" }}
-                {% if not a_league %}{{ match.league }}{% endif %}</p>
+                {% if not a_league %}{{ match.league_link }}{% endif %}</p>
             <a href="{{ match.get_absolute_url }}"> {{ match.h_title }} {{ match.goals_h }}
                 : {{ match.goals_a }} {{ match.a_title }} </a>
         </h2>

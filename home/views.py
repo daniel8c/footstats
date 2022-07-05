@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpRequest
-from home.models import MatchResult, League
+from home.models import MatchResult, League, Roster
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from home.pitch import draw_pitch, get_info_situations, add_situations_to_pitch
 from plotly.offline import plot
@@ -40,17 +40,21 @@ def filter_league(request, name):
     except EmptyPage:
         matches = paginator.page(paginator.num_pages)
 
-    return render(request, 'home/match/list.html', {'a_league': league, 'matches': matches, 'all_leagues': all_leagues, })
+    return render(request, 'home/match/list.html',
+                  {'a_league': league, 'matches': matches, 'all_leagues': all_leagues, })
 
 
 def match_detail(request, id, h_title, a_title):
-
     match = get_object_or_404(MatchResult, id=id, h_title=h_title, a_title=a_title)
     home_s, away_s = get_info_situations(match)
     fig = draw_pitch()
-    add_situations_to_pitch(fig, home_s,away_s)
+    add_situations_to_pitch(fig, home_s, away_s, match = match)
     config = {'displayModeBar': False, }
-    plot_div = plot({'data': fig,}, output_type='div', config = config)
-    # TODO plot with situation
+    plot_div = plot({'data': fig, }, output_type='div', config=config)
+
+    # Rosters
+    rosters_home, rosters_away = match.roster_result.filter(h_a='h'), match.roster_result.filter(h_a='a')
+
     # TODO display rosters
-    return render(request, 'home/match/detail.html', {'match': match, 'plot_div': plot_div})
+    return render(request, 'home/match/detail.html',
+                  {'match': match, 'plot_div': plot_div, 'rosters_home': rosters_home, 'rosters_away': rosters_away})

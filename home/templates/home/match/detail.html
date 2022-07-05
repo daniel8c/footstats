@@ -3,6 +3,23 @@
 {% block content %}
     {{ match }}
     <div>
-    {{ plot_div | safe}}
+        {{ plot_div | safe }}
     </div>
+    <div>
+        <h1>Składy</h1>
+    <div class="container">
+        <div class="rosters_home">
+            {% for player in rosters_home %}
+                <h2>{{ player }}</h2>
+            {% endfor %}
+        </div>
+        <div class="rosters_away">
+            {% for player in rosters_away %}
+                <h2>{{ player }}</h2>
+            {% endfor %}
+        </div>
+    </div>
+
+    </div>
+
 {% endblock %}
