@@ -9,26 +9,15 @@ from plotly.offline import plot
 # Create your views here.
 
 
-def match_list(request):
-    object_list = MatchResult.resulttrue.all().order_by('-league', '-datetime')
+def match_list(request, name=None):
+    league = None
+
+    object_list = MatchResult.resulttrue.all().order_by('-datetime')
     all_leagues = League.objects.all()
 
-    paginator = Paginator(object_list, 10)
-    page = request.GET.get('page')
-
-    try:
-        matches = paginator.page(page)
-    except PageNotAnInteger:
-        matches = paginator.page(1)
-    except EmptyPage:
-        matches = paginator.page(paginator.num_pages)
-    return render(request, 'home/match/list.html', {'matches': matches, 'all_leagues': all_leagues, 'page': page})
-
-
-def filter_league(request, name):
-    all_leagues = League.objects.all()
-    league = get_object_or_404(League, name=name)
-    object_list = league.result_league.filter(season='2021').filter(isresult=True).order_by('-datetime')
+    if name:
+        league = get_object_or_404(League, name=name)
+        object_list = league.result_league.filter(season='2021').filter(isresult=True).order_by('-datetime')
 
     paginator = Paginator(object_list, 10)
     page = request.GET.get('page')
@@ -41,7 +30,7 @@ def filter_league(request, name):
         matches = paginator.page(paginator.num_pages)
 
     return render(request, 'home/match/list.html',
-                  {'a_league': league, 'matches': matches, 'all_leagues': all_leagues, })
+                  {'matches': matches, 'a_league': league, 'all_leagues': all_leagues, 'page': page})
 
 
 def match_detail(request, id, h_title, a_title):
